@@ -1,0 +1,34 @@
+   1: O3 -> O2 + O(1D)
+   2: O3 -> O2 + O(3P)
+   3: H2O2 -> 2 OH
+   4: NO2 -> NO + O(3P)
+   5: NO3 -> NO + O2
+   6: NO3 -> NO2 + O(3P)
+   7: HNO2 -> OH + NO
+   8: HNO3 -> OH + NO2
+  11: CH2O -> H + HCO
+  12: CH2O -> H2 + CO
+  13: CH3CHO -> CH3 + HCO
+  14: C2H5CHO -> C2H5 + HCO
+  15: nC3H7CHO -> nC3H7 + HCO
+  16: nC3H7CHO -> C2H4 + CH3CHO
+  17: iC3H7CHO -> iC3H7 + HCO
+  18: CH2C(CH3)CHO -> Products
+  19: CH2C(CH3)CHO -> Products
+  21: CH3COCH3 -> CH3CO + CH3
+  22: CH3COC2H5 -> C2H5 + CH3CO
+  23: CH3COCHCH2 -> Products
+  24: CH3COCHCH2 -> Products
+  31: CHOCHO -> 2CO + H2
+  32: CHOCHO -> CH2O + CO
+  33: CHOCHO -> HCO + HCO
+  34: CH3COCHO -> CH3CO + HCO
+  35: CH3COCOCH3 -> Products
+  41: CH3OOH -> CH3O + OH
+  51: CH3ONO2 -> CH3O + NO2
+  52: CH3CH2ONO2 -> CH3CH2O + NO2
+  53: nC3H7ONO2 -> nC3H7O + NO2
+  54: CH3CH2ONO2 -> CH3CH2O + NO2
+  55: 2-C4H9ONO2 -> 2-C4H9O + NO2
+  56: CH3COCH2(ONO2) -> CH3COCH2(O.) + NO2
+  57: CH3COCH2(ONO2) -> CH3COCH2(O.) + NO2
