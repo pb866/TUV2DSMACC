@@ -96,7 +96,7 @@ END SUBROUTINE jmech
 
 !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!
 
-SUBROUTINE tdlnk(flink,translib,tdblab)
+SUBROUTINE tdlnk(flink,translib,tdblab,brat)
 
 !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!
 !                                                                      !
@@ -120,6 +120,8 @@ SUBROUTINE tdlnk(flink,translib,tdblab)
 ! • translib:   Database with DSMACC photolysis IDs and associated TUV !
 !               photolysis IDs and switch for TUV reaction treatment   !
 ! • tdblab:     TUV labels associated with DSMACC photolysis IDs       !
+! • brat:       branching ratios used in DSMACC for certain photolysis !
+!               reactions.                                             !
 !                                                                      !
 ! internal:                                                            !
 ! • i:          counter for loops                                      !
@@ -143,6 +145,7 @@ USE params
 ! I/O:
   CHARACTER(flen), INTENT(IN)   :: flink
   INTEGER, INTENT(OUT)          :: translib(np,3)
+  REAL(4), INTENT(OUT)          :: brat(np)
   CHARACTER(llab), INTENT(OUT)  :: tdblab(np)
 
 ! internal:
@@ -154,7 +157,8 @@ USE params
 ! Intialisation:
 
   translib  = 0
-  tdblab = ''
+  tdblab    = ''
+  brat      = 1.
 
 ! get database with TUV-DSMACC links
   OPEN(15,FILE=flink,STATUS='OLD')
@@ -176,8 +180,16 @@ td: &
     IF(line(1:1)=='#') CYCLE ! Ignore comments
     nrxn = nrxn + 1 ! counter for number of (active) reactions
     idx = INDEX(line,":")
+    print*,line(:idx-1)
     READ(line(:idx-1),*) translib(nrxn,1)
-    READ(line(idx+1:),'(A)') tdblab(nrxn)
+    line = line(idx+1:)
+    IF(line(1:1) == ':') THEN
+      READ(line(2:),'(A)') tdblab(nrxn)
+     ELSE
+      idx = INDEX(line,':')
+      READ(line(:idx-1),*) brat(nrxn)
+      READ(line(idx+1:),'(A)') tdblab(nrxn)
+    ENDIF
     tdblab(nrxn) = ADJUSTL(tdblab(nrxn))
   ENDDO td
 

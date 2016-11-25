@@ -21,6 +21,8 @@ PROGRAM linkphot
 ! • translib:   Library of IDs used in DSMACC and corresponding TUV IDs!
 !               as well as switches to toggle on/off reactions in TUV  !
 ! • tdblab:     memory of TUV labels to link DSMACC and TUV databases  !
+! • brat:       branching ratios used in DSMACC for certain photolysis !
+!               reactions.                                             !
 ! • tuvlab:     TUV labels from TUV input file                         !
 ! • idtuv:      IDs of TUV photoreactions                              !
 ! • fltuv:      Memory of flags used to toggle photoreactions on/off   !
@@ -41,6 +43,7 @@ USE params
 
   CHARACTER(flen)  :: fmech,flink,foutp,ftuv
   INTEGER          :: translib(np,3),idtuv(np)
+  REAL(4)          :: brat(np)
   CHARACTER(llab)  :: tdblab(np),tuvlab(np)
   CHARACTER(1)     :: fltuv(np)
 
@@ -50,7 +53,7 @@ USE params
   CALL finit(fmech,flink,foutp,ftuv)
 
 ! read photolysis IDs and labels from files
-  CALL tdlnk(flink,translib,tdblab)
+  CALL tdlnk(flink,translib,tdblab,brat)
   CALL tuvdb(ftuv,idtuv,tuvlab,fltuv)
 ! create library with associated IDs (and flags from TUV)
   CALL creatlib(translib,tdblab,idtuv,tuvlab,fltuv)
@@ -61,7 +64,7 @@ USE params
   CALL jmech(fmech)
 ! translate IDs and write them into mechanism
 ! (check that all IDs are available)
-  CALL wrtoutp(foutp,translib,tdblab)
+  CALL wrtoutp(foutp,translib,tdblab,brat)
 
 !––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––!
 
