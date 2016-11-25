@@ -31,7 +31,9 @@ The programme looks for a __default name 'usrinp'__ to read the data from. You c
 
 ### Link database (db) file
 
-Create a database file (or use/adjust the predefined one) to link DSMACC photolysis IDs to TUV reaction labels and save it to the _IO_ folder. The information stored in the database file are the DSMACC photolysis IDs as INTEGER separated from the TUV reaction label used exactly as in the TUV input file (not the source code itself!). Comments can be added to the database by using a `#`-sign at the first character of a line. No strict file format is used concering white spaces. File format:
+Create a database file (or use/adjust the predefined one) to link DSMACC photolysis IDs to TUV reaction labels and save it to the _IO_ folder. The information stored in the database file are the DSMACC photolysis IDs as INTEGER, possible branching ratios used in DSMACC for certain photolysis reactions, the TUV reaction label (used exactly as in the TUV input file, not the source code itself!). Comments can be added to the database by using a `#`-sign at the first character of a line. 
+First DSMACC photolysis IDs are given in the database file followed by a double colon (`::`), if no branching ratios are used in DSMACC or a colon (`:`), the branching ratio as are REAL(4) and another colon. At last, the TUV label is given. No strict file format is used concering white spaces except for the case, where no branching ratios are present in DSMACC. In this case the separator between the DSMACC ID and the TUV label has to be a double colon (`::`) and no white space are allowed between the colons.
+File format:
 `# Comments or dummy reactions
  <DSMACC ID> : <TUV label>`
 
