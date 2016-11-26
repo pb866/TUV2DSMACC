@@ -42,7 +42,7 @@ USE params
   IMPLICIT NONE
 
 ! I/O:
-  INTEGER                      :: translib(np,3)
+  INTEGER                      :: translib(np,2+nbr)
   CHARACTER(llab), INTENT(IN)  :: tdblab(np)
   INTEGER, INTENT(IN)          :: idtuv(np)
   CHARACTER(llab), INTENT(IN)  :: tuvlab(np)
@@ -58,9 +58,9 @@ USE params
     DO j = 1,np
       IF(tdblab(i)==tuvlab(j)) THEN
 ! Link IDs:
-        translib(i,2) = idtuv(j)
+        translib(i,nbr+1) = idtuv(j)
 ! Save TUV switches for reaction treatment:
-        IF(fltuv(j)=='T') translib(i,3) = 1
+        IF(fltuv(j)=='T') translib(i,2+nbr) = 1
         EXIT
 ! Warn about broken links:
        ELSEIF(j==np .and. tdblab(i)/=tuvlab(j)) THEN

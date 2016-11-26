@@ -42,8 +42,8 @@ USE params
   IMPLICIT NONE
 
   CHARACTER(flen)  :: fmech,flink,foutp,ftuv
-  INTEGER          :: translib(np,3),idtuv(np)
-  REAL(4)          :: brat(np)
+  INTEGER          :: translib(np,2+nbr),idtuv(np)
+  REAL(4)          :: brat(np,nbr)
   CHARACTER(llab)  :: tdblab(np),tuvlab(np)
   CHARACTER(1)     :: fltuv(np)
 

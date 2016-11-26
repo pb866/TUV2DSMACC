@@ -31,6 +31,7 @@ SUBROUTINE jmech(fmech)
 !                                                                      !
 ! internal:                                                            !
 ! • nj:         ID for photoreactions used in DSMACC                   !
+! • i:          counter for loops                                      !
 ! • ierr:       index for read error treatment                         !
 ! • line:       memory of lines read in from kpp file                  !
 !                                                                      !
@@ -51,13 +52,22 @@ USE params
   CHARACTER(flen), INTENT(IN)   :: fmech
 
 ! internal:
-  INTEGER               :: nj,ierr
+  INTEGER               :: nj, i, ierr
   CHARACTER(llen)       :: line
 
 !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!
 
   OPEN(15,FILE=fmech,STATUS='OLD')
   OPEN(16,FILE="sortj.tmp")
+
+! Force include of inorganic photolysis reactions, if inorg is set to true in params.
+! This is to include output of inorganic photolysis labels for copy/paste
+! to the DSMACC module constants.f90, while only updating organic.kpp in DSMACC.
+  IF(inorg) THEN
+    DO i = 1,8
+      WRITE(16,*) i
+    ENDDO
+  ENDIF
 
 ! Read over mechanism file line by line
 ! and identify photolysis reactions in the mechanism:
@@ -144,12 +154,13 @@ USE params
 
 ! I/O:
   CHARACTER(flen), INTENT(IN)   :: flink
-  INTEGER, INTENT(OUT)          :: translib(np,3)
-  REAL(4), INTENT(OUT)          :: brat(np)
+  INTEGER, INTENT(OUT)          :: translib(np,2+nbr)
+  REAL(4), INTENT(OUT)          :: brat(np,nbr)
   CHARACTER(llab), INTENT(OUT)  :: tdblab(np)
 
 ! internal:
   INTEGER               :: i,idx,ierr
+  INTEGER               :: tid
   CHARACTER(llen)       :: line
 
 !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!
@@ -158,7 +169,7 @@ USE params
 
   translib  = 0
   tdblab    = ''
-  brat      = 1.
+  brat      = 0.
 
 ! get database with TUV-DSMACC links
   OPEN(15,FILE=flink,STATUS='OLD')
@@ -180,17 +191,15 @@ td: &
     IF(line(1:1)=='#') CYCLE ! Ignore comments
     nrxn = nrxn + 1 ! counter for number of (active) reactions
     idx = INDEX(line,":")
-    print*,line(:idx-1)
-    READ(line(:idx-1),*) translib(nrxn,1)
+    READ(line(:idx-1),*) tid
     line = line(idx+1:)
     IF(line(1:1) == ':') THEN
+      translib(nrxn,1) = tid
       READ(line(2:),'(A)') tdblab(nrxn)
+      tdblab(nrxn) = ADJUSTL(tdblab(nrxn))
      ELSE
-      idx = INDEX(line,':')
-      READ(line(:idx-1),*) brat(nrxn)
-      READ(line(idx+1:),'(A)') tdblab(nrxn)
+      CALL bratio(line,tid,translib,brat,tdblab)
     ENDIF
-    tdblab(nrxn) = ADJUSTL(tdblab(nrxn))
   ENDDO td
 
 !––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––!
@@ -307,5 +316,50 @@ tuv: &
   CLOSE(15)
 
 END SUBROUTINE tuvdb
+
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!
+
+SUBROUTINE bratio(line,tid,translib,brat,tdblab)
+
+! Modules:
+! ========
+USE params
+
+IMPLICIT NONE
+
+  INTEGER, INTENT(IN)           :: tid
+  CHARACTER(llen), INTENT(INOUT):: line
+  REAL(4), INTENT(INOUT)        :: brat(np,nbr)
+  CHARACTER(llab), INTENT(INOUT):: tdblab(np)
+  INTEGER, INTENT(INOUT)        :: translib(np,2+nbr)
+
+  INTEGER               :: i,j,idx
+  REAL(4)               :: brr
+  CHARACTER(llab)       :: tlab
+
+
+  idx = INDEX(line,':')
+  READ(line(:idx-1),*) brr
+  READ(line(idx+1:),'(A)') tlab
+  tlab = ADJUSTL(tlab)
+
+  DO i = 1,nrxn-1
+    IF(tlab(:INDEX(tlab,'->'))==tdblab(i)(:INDEX(tlab,'->'))) THEN
+      nrxn = nrxn - 1
+      DO j = 2, nbr
+        IF(translib(i,j)==0) THEN
+          translib(i,j) = tid
+          brat(i,j)     = brr
+          EXIT
+        ENDIF
+      ENDDO
+     ELSEiF(i==nrxn-1) THEN
+      translib(nrxn,1) = tid
+      brat(nrxn,1)     = brr
+      tdblab(nrxn)     = tlab
+    ENDIF
+  ENDDO
+
+END SUBROUTINE bratio
 
 !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!
