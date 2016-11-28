@@ -80,7 +80,11 @@ USE params
          ELSE
           DO i = 1,nbr
             IF(translib(n,i)==0) EXIT
-            WRITE(15,103) translib(n,i),brat(n,i),trim(tdblab(n))
+            IF(brat(n,i)>0.9999 .and. brat(n,i)<1.0001) THEN
+                WRITE(15,102) translib(n,1),trim(tdblab(n))
+              ELSE
+                WRITE(15,103) translib(n,i),brat(n,i),trim(tdblab(n))
+            ENDIF
           ENDDO
         ENDIF
         EXIT

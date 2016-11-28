@@ -6,10 +6,11 @@
 !   - jmech                                                            !
 !   - tdlnk                                                            !
 !   - tuvdb                                                            !
+!   - bratio                                                           !
 !                                                                      !
 !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!
 
-SUBROUTINE jmech(fmech)
+SUBROUTINE jmech(fmech,translib)
 
 !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!
 !                                                                      !
@@ -28,10 +29,12 @@ SUBROUTINE jmech(fmech)
 !                                                                      !
 ! I/O:                                                                 !
 ! • fmech:      Path + name of mechanism (kpp) file                    !
+! • translib:   Database with DSMACC photolysis IDs and associated TUV !
+!               photolysis IDs and switch for TUV reaction treatment   !
 !                                                                      !
 ! internal:                                                            !
 ! • nj:         ID for photoreactions used in DSMACC                   !
-! • i:          counter for loops                                      !
+! • i,j:        counter for loops                                      !
 ! • ierr:       index for read error treatment                         !
 ! • line:       memory of lines read in from kpp file                  !
 !                                                                      !
@@ -50,9 +53,10 @@ USE params
 
 ! I/O:
   CHARACTER(flen), INTENT(IN)   :: fmech
+  INTEGER, INTENT(IN)           :: translib(np,2+nbr)
 
 ! internal:
-  INTEGER               :: nj, i, ierr
+  INTEGER               :: nj, i, j, ierr
   CHARACTER(llen)       :: line
 
 !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!
@@ -63,11 +67,24 @@ USE params
 ! Force include of inorganic photolysis reactions, if inorg is set to true in params.
 ! This is to include output of inorganic photolysis labels for copy/paste
 ! to the DSMACC module constants.f90, while only updating organic.kpp in DSMACC.
-  IF(inorg) THEN
-    DO i = 1,8
-      WRITE(16,*) i
-    ENDDO
-  ENDIF
+  SELECT CASE(mech)
+    CASE(1)
+      DO i = 1,8
+        WRITE(16,*) i
+      ENDDO
+    CASE(2)
+      DO i = 1, nrxn
+        WRITE(16,*) translib(i,1)
+        DO j = 2, nbr
+          IF(translib(i,j)==0) THEN
+            EXIT
+           ELSE
+            WRITE(16,*) translib(i,j)
+          ENDIF
+        ENDDO
+      ENDDO
+      RETURN
+  END SELECT
 
 ! Read over mechanism file line by line
 ! and identify photolysis reactions in the mechanism:
@@ -137,6 +154,7 @@ SUBROUTINE tdlnk(flink,translib,tdblab,brat)
 ! • i:          counter for loops                                      !
 ! • idx:        index (for character string treatment)                 !
 ! • ierr:       index for read error treatment                         !
+! • tid:        temporary memory for DSMACC photolysis IDs             !
 ! • line:       memory of lines read in from kpp file                  !
 !                                                                      !
 !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!
@@ -321,12 +339,50 @@ END SUBROUTINE tuvdb
 
 SUBROUTINE bratio(line,tid,translib,brat,tdblab)
 
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!
+!                                                                      !
+!   SUBROUTINE tuvdb                                                   !
+!                                                                      !
+! PURPOSE:                                                             !
+! Read in TUV photolysis IDs and labels to link them to DSMACC later.  !
+!                                                                      !
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!
+!                                                                      !
+! INCLUDES:                                                            !
+! • params with array sizes.                                           !
+!                                                                      !
+!                                                                      !
+! VARIABLES:                                                           !
+!                                                                      !
+! I/O:                                                                 !
+! • line:       memory of lines read in from kpp file                  !
+! • tid:        temporary memory for DSMACC photolysis IDs             !
+! • translib:   Database with DSMACC photolysis IDs and associated TUV !
+!               photolysis IDs and switch for TUV reaction treatment   !
+! • brat:       branching ratios used in DSMACC for certain photolysis !
+!               reactions.                                             !
+! • tdblab:     TUV labels associated with DSMACC photolysis IDs       !
+!                                                                      !
+! internal:                                                            !
+! • i,j:        counter for loops                                      !
+! • idx:        index (for character string treatment)                 !
+! • brr:        temporary memory for branching ratios                  !
+! • tlab:       temporary memory for photolysis labels                 !
+!                                                                      !
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!
+
 ! Modules:
 ! ========
 USE params
 
-IMPLICIT NONE
 
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!
+! Variable declarations:                                               !
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!
+
+  IMPLICIT NONE
+
+! I/O:
   INTEGER, INTENT(IN)           :: tid
   CHARACTER(llen), INTENT(INOUT):: line
   REAL(4), INTENT(INOUT)        :: brat(np,nbr)
@@ -336,6 +392,8 @@ IMPLICIT NONE
   INTEGER               :: i,j,idx
   REAL(4)               :: brr
   CHARACTER(llab)       :: tlab
+
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!
 
 
   idx = INDEX(line,':')

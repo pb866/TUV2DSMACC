@@ -61,7 +61,7 @@ USE params
 !––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––!)
 
 ! Read in all j IDs used in current mechanism and sort them ascending
-  CALL jmech(fmech)
+  CALL jmech(fmech,translib)
 ! translate IDs and write them into mechanism
 ! (check that all IDs are available)
   CALL wrtoutp(foutp,translib,tdblab,brat)
