@@ -83,6 +83,7 @@ USE params
           ENDIF
         ENDDO
       ENDDO
+      CLOSE(15)
       RETURN
   END SELECT
 

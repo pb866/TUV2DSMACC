@@ -14,8 +14,8 @@ The programme reads DSMACC photolysis IDs and associated TUV reaction labels fro
 1. Save input files to _'IO'_ folder (see [later](#io-files)).
 2. Adjust parameters in Module MOD/params.f90 and re-compile.
 3. Run programme using `./linkphot <kpp file> <TUV input file> <link db file> <output file>`.
-1. All files must be stored in the _IO folder_. 
-2. File arguments are optional. Default names will be used, if obsolete (see [later](#io-files)). Files in arguments must be given __with__ the correct extension, but __without__ the folder path.
+    1. All files must be stored in the _IO folder_. 
+    2. File arguments are optional. Default names will be used, if obsolete (see [later](#io-files)). Files in arguments must be given __with__ the correct extension, but __without__ the folder path.
 4. Output is written to the defined output file in the _IO_ folder.
 
 ## Parameters in linkphot
