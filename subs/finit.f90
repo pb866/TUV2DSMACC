@@ -46,10 +46,16 @@ USE params
   IF(flink=="") flink = "MCM331.db"
   IF(foutp=="") foutp = "MCM331.f90"
 
-  fmech = "IO/"//ADJUSTL(fmech)
-  ftuv  = "IO/"//ADJUSTL(ftuv)
-  flink = "IO/"//ADJUSTL(flink)
-  foutp = "IO/"//ADJUSTL(foutp)
+  fmech = ADJUSTL(fmech)
+  ftuv  = ADJUSTL(ftuv)
+  flink = ADJUSTL(flink)
+  foutp = ADJUSTL(foutp)
+
+  IF(fmech(:3)/='IO/') fmech = "IO/"//fmech
+  IF(ftuv(:3)/='DB/') ftuv  = "DB/"//ftuv
+  IF(flink(:3)/='DB/') flink = "DB/"//flink
+  IF(foutp(:3)/='IO/') foutp = "IO/"//foutp
+
 
 !––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––!
 
