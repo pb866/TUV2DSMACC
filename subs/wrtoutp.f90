@@ -1,4 +1,14 @@
-SUBROUTINE wrtoutp(foutp,translib,tdblab,brat)
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!
+!                                                                      !
+!   SUBROUTINES associated with writing output files.                  !
+!                                                                      !
+!   Contains:                                                          !
+!   - wrtoupt                                                          !
+!   - adjARRsiz                                                        !
+!                                                                      !
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!
+
+SUBROUTINE wrtoutp(foutp,translib,tdblab,brat,jmax)
 
 !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!
 !                                                                      !
@@ -23,6 +33,8 @@ SUBROUTINE wrtoutp(foutp,translib,tdblab,brat)
 ! • tdblab:     TUV labels associated with DSMACC photolysis IDs       !
 ! • brat:       branching ratios used in DSMACC for certain photolysis !
 !               reactions.                                             !
+! • jmax:       maximum value of DSMACC j labels rounded to the next   !
+!               full 100 needed to define array size in DSMACC         !
 !                                                                      !
 ! internal:                                                            !
 ! • nj:         ID for photoreactions used in DSMACC                   !
@@ -48,6 +60,7 @@ USE params
   INTEGER, INTENT(IN)           :: translib(np,2+nbr)
   CHARACTER(llab), INTENT(IN)   :: tdblab(np)
   REAL(4), INTENT(IN)           :: brat(np,nbr)
+  INTEGER, INTENT(OUT)          :: jmax
 
 ! internal:
   INTEGER          :: i,j,n,ierr
@@ -55,6 +68,7 @@ USE params
 
 
 
+  jmax = 0
   OPEN(15,FILE=foutp,STATUS='UNKNOWN')
   REWIND(16)
 
@@ -100,11 +114,16 @@ USE params
       ENDIF
  201  CONTINUE
     ENDDO
+    IF(nj > jmax) jmax = nj
   ENDDO
   WRITE(15,'(2X,"END SELECT")')
 
   CLOSE(15)
   CLOSE(16, STATUS='DELETE')
+  DO i = 1, 100
+    IF(MOD(jmax,100)==0) EXIT
+    jmax = jmax + 1
+  ENDDO
 
 101 FORMAT(4X,"CASE(",I3,")")
 102 FORMAT(6X,"j(",I4,") = seval(n,theta,tmp,tmp2,b,c,d) ! ",A)
@@ -112,3 +131,49 @@ USE params
 104 FORMAT(A,I4,A)
 
 END SUBROUTINE wrtoutp
+
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!
+
+SUBROUTINE adjARRsiz(fconst,jmax)
+
+! Modules:
+! ========
+USE params
+
+
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!
+! Variable declarations:                                               !
+!~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!
+
+  IMPLICIT NONE
+
+! I/O:
+  CHARACTER(flen), INTENT(INOUT) :: fconst
+  INTEGER, INTENT(IN) ::         jmax
+
+! internal:
+  CHARACTER(flen) ::             fpath
+  CHARACTER(2*flen) ::           cmd
+  INTEGER ::                     idx
+  LOGICAL ::                     ioexist
+
+  INQUIRE(FILE=fconst, exist=ioexist)
+  IF(.not.ioexist) THEN
+    WRITE(*,'(A)') "WARNING! No DSMACC constants file found."
+    WRITE(*,'(2A)') "File name: ", trim(fconst)
+    WRITE(*,'(A)') &
+      "Please, specify correct file name (and path) in programme argument 5."
+    WRITE(*,'(A)') "Adjustment of DSMACC array sizes skipped."
+    RETURN
+  ENDIF
+
+  idx = INDEX(fconst,'/',back=.true.)
+  fpath = fconst(:idx-1)
+  fconst = fconst(idx+1:)
+
+  cmd = ""
+  WRITE(cmd,"(A,I5,4A)") "perl -pi -e 's/jmax\s*=\s*[0-9]+/jmax=", &
+       jmax,"/g;' ",trim(fpath),"/",trim(fconst)
+  CALL SYSTEM(cmd)
+
+END SUBROUTINE adjARRsiz

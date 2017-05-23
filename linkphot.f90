@@ -16,7 +16,7 @@ PROGRAM linkphot
 !                                                                      !
 ! VARIABLES:                                                           !
 !                                                                      !
-! • fmech/flink/foutp/ftuv:                                            !
+! • fmech/flink/foutp/ftuv/fconst:                                     !
 !               Paths + names of I/O files                             !
 ! • translib:   Library of IDs used in DSMACC and corresponding TUV IDs!
 !               as well as switches to toggle on/off reactions in TUV  !
@@ -27,6 +27,8 @@ PROGRAM linkphot
 ! • idtuv:      IDs of TUV photoreactions                              !
 ! • fltuv:      Memory of flags used to toggle photoreactions on/off   !
 !               in TUV                                                 !
+! • jmax:       maximum value of DSMACC j labels rounded to the next   !
+!               full 100 needed to define array size in DSMACC         !
 !                                                                      !
 !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!
 
@@ -41,16 +43,17 @@ USE params
 
   IMPLICIT NONE
 
-  CHARACTER(flen)  :: fmech,flink,foutp,ftuv
+  CHARACTER(flen)  :: fmech,flink,foutp,ftuv,fconst
   INTEGER          :: translib(np,2+nbr),idtuv(np)
   REAL(4)          :: brat(np,nbr)
   CHARACTER(llab)  :: tdblab(np),tuvlab(np)
   CHARACTER(1)     :: fltuv(np)
+  INTEGER          :: jmax
 
 !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!
 
 ! initialise files (get file names from arguments or use standard names)
-  CALL finit(fmech,flink,foutp,ftuv)
+  CALL finit(fmech,flink,foutp,ftuv,fconst)
 
 ! read photolysis IDs and labels from files
   CALL tdlnk(flink,translib,tdblab,brat)
@@ -64,11 +67,11 @@ USE params
   CALL jmech(fmech,translib)
 ! translate IDs and write them into mechanism
 ! (check that all IDs are available)
-  CALL wrtoutp(foutp,translib,tdblab,brat)
+  CALL wrtoutp(foutp,translib,tdblab,brat,jmax)
+  CALL adjARRsiz(fconst,jmax)
 
 !––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––!
 
-  WRITE(*,'(A)')
   WRITE(*,'(A)') "Done."
 
 END PROGRAM linkphot
