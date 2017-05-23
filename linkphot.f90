@@ -68,7 +68,12 @@ USE params
 ! translate IDs and write them into mechanism
 ! (check that all IDs are available)
   CALL wrtoutp(foutp,translib,tdblab,brat,jmax)
+
+! Adjust DSMACC constants file:
+! - Adjust array sizes related to j values
   CALL adjARRsiz(fconst,jmax)
+! - Amend select case of TUVvers by missing include files
+  CALL adjCASE(fconst,foutp)
 
 !––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––!
 

@@ -77,10 +77,10 @@ if (theta .le. 90) then
       INCLUDE './tuv_old/MCM3.inc'
     CASE(1)
       INCLUDE './TUV_5.2.1/MCM331.inc'
-    CASE(2)
+    CASE( 2)
       INCLUDE './TUV_5.2.1/MCM4.inc'
     CASE DEFAULT
-      STOP "Select TUV case between 0 and 2."
+      STOP "Select TUV case between 0 and  2."
     END SELECT
 
     enddo

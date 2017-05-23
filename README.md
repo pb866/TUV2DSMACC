@@ -153,8 +153,10 @@ adjusted to the maximum j value determined by this programme rounded up
 to the next full 100. If the programme parameter is obsolete, the
 programme will skip this part.
 
-Future work aims to check for an existing case of the specified include
-file. If no case is present, a new case will be added in _constants.f90_.
+Furthermore, the `select case` of `TUVvers` in _constants.f90_ will be
+ammended by the current include file, if it is not already included in
+one of the options. The case assigned will be an `integer` 1 greater than
+the largest case.
 
 
 ## Modifying the code
@@ -210,11 +212,5 @@ adjusted in subroutine _wrtoutp_.
 
 File unit | I/O files
 ---------:|:---------
-       15 | I/O files fmech, flink, ftuv, foutp
-       16 | temporary file sortj.tmp for DSMACC photolysis labels
-       17 | I/O file fconst (for future use, see [To Do](#to-do˜˜))
-
-
-### To Do:
-
-- Add case in constants.f90, if include file is missing.
+       15 | I/O files fmech, flink, ftuv, foutp, fconst
+       16 | temporary files sortj.tmp and constants.tmp
