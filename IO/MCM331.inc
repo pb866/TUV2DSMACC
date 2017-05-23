@@ -23,30 +23,32 @@
       j(  13) = seval(n,theta,tmp,tmp2,b,c,d) ! CH3CHO -> CH3 + HCO
     CASE( 20)
       j(  14) = seval(n,theta,tmp,tmp2,b,c,d) ! C2H5CHO -> C2H5 + HCO
-    CASE( 76)
-      j(  15) = seval(n,theta,tmp,tmp2,b,c,d) ! nC3H7CHO -> nC3H7 + HCO
-    CASE( 77)
-      j(  16) = seval(n,theta,tmp,tmp2,b,c,d) ! nC3H7CHO -> C2H4 + CH3CHO
-    CASE( 78)
-      j(  17) = seval(n,theta,tmp,tmp2,b,c,d) ! iC3H7CHO -> iC3H7 + HCO
-    CASE( 62)
-      j(  18) = seval(n,theta,tmp,tmp2,b,c,d)*0.500 ! CH2C(CH3)CHO -> Products
-      j(  19) = seval(n,theta,tmp,tmp2,b,c,d)*0.500 ! CH2C(CH3)CHO -> Products
+    CASE(  0)
+      j(  15) = seval(n,theta,tmp,tmp2,b,c,d) ! n-C3H7CHO -> n-C3H7 + CHO
+    CASE(  0)
+      j(  16) = seval(n,theta,tmp,tmp2,b,c,d) ! n-C3H7CHO -> C2H4 + CH2CHOH
+    CASE(  0)
+      j(  17) = seval(n,theta,tmp,tmp2,b,c,d) ! i-C3H7CHO -> i-C3H7 + CHO
+    CASE(  0)
+      j(  18) = seval(n,theta,tmp,tmp2,b,c,d) ! CH2=C(CH3)CHO -> CH2=CCH3 + CHO
+    CASE(  0)
+      j(  19) = seval(n,theta,tmp,tmp2,b,c,d) ! CH2=C(CH3)CHO -> CH2=C(CH3)CO + H
     CASE( 63)
       j(  20) = seval(n,theta,tmp,tmp2,b,c,d) ! HPALD -> Products
     CASE( 25)
       j(  21) = seval(n,theta,tmp,tmp2,b,c,d) ! CH3COCH3 -> CH3CO + CH3
-    CASE( 88)
-      j(  22) = seval(n,theta,tmp,tmp2,b,c,d) ! CH3COC2H5 -> C2H5 + CH3CO
-    CASE( 61)
-      j(  23) = seval(n,theta,tmp,tmp2,b,c,d)*0.500 ! CH3COCHCH2 -> Products
-      j(  24) = seval(n,theta,tmp,tmp2,b,c,d)*0.500 ! CH3COCHCH2 -> Products
-    CASE( 21)
-      j(  31) = seval(n,theta,tmp,tmp2,b,c,d) ! CHOCHO -> 2CO + H2
+    CASE(  0)
+      j(  22) = seval(n,theta,tmp,tmp2,b,c,d) ! CH3COCH2CH3 -> CH3CO + CH2CH3
+    CASE(  0)
+      j(  23) = seval(n,theta,tmp,tmp2,b,c,d) ! CH3COCH=CH2 -> C3H6 + CO
+    CASE(  0)
+      j(  24) = seval(n,theta,tmp,tmp2,b,c,d) ! CH3COCH=CH2 -> C2H3 + CH3CO
+    CASE(  0)
+      j(  31) = seval(n,theta,tmp,tmp2,b,c,d) ! CHOCHO -> H2 + 2 CO
     CASE( 23)
       j(  32) = seval(n,theta,tmp,tmp2,b,c,d) ! CHOCHO -> CH2O + CO
-    CASE( 22)
-      j(  33) = seval(n,theta,tmp,tmp2,b,c,d) ! CHOCHO -> HCO + HCO
+    CASE(  0)
+      j(  33) = seval(n,theta,tmp,tmp2,b,c,d) ! CHOCHO -> 2 HO2 + 2 CO
     CASE( 24)
       j(  34) = seval(n,theta,tmp,tmp2,b,c,d) ! CH3COCHO -> CH3CO + HCO
     CASE( 60)
@@ -55,11 +57,11 @@
       j(  41) = seval(n,theta,tmp,tmp2,b,c,d) ! CH3OOH -> CH3O + OH
     CASE( 27)
       j(  51) = seval(n,theta,tmp,tmp2,b,c,d) ! CH3ONO2 -> CH3O + NO2
-    CASE( 65)
-      j(  52) = seval(n,theta,tmp,tmp2,b,c,d) ! CH3CH2ONO2 -> CH3CH2O + NO2
-      j(  52) = seval(n,theta,tmp,tmp2,b,c,d) ! CH3CH2ONO2 -> CH3CH2O + NO2
-    CASE( 92)
-      j(  53) = seval(n,theta,tmp,tmp2,b,c,d) ! nC3H7ONO2 -> nC3H7O + NO2
+    CASE(  0)
+      j(  52) = seval(n,theta,tmp,tmp2,b,c,d) ! C2H5ONO2 -> C2H5O + NO2
+      j(  52) = seval(n,theta,tmp,tmp2,b,c,d) ! C2H5ONO2 -> C2H5O + NO2
+    CASE(  0)
+      j(  53) = seval(n,theta,tmp,tmp2,b,c,d) ! n-C3H7ONO2 -> C3H7O + NO2
     CASE( 95)
       j(  55) = seval(n,theta,tmp,tmp2,b,c,d) ! 2-C4H9ONO2 -> 2-C4H9O + NO2
     CASE( 68)

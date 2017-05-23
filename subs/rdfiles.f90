@@ -64,7 +64,7 @@ USE params
   OPEN(15,FILE=fmech,STATUS='OLD')
   OPEN(16,FILE="sortj.tmp")
 
-! Force include of inorganic photolysis reactions, if inorg is set to true in params.
+! Force inclusion of inorganic photolysis reactions, if inorg is set to true in params.
 ! This is to include output of inorganic photolysis labels for copy/paste
 ! to the DSMACC module constants.f90, while only updating organic.kpp in DSMACC.
   SELECT CASE(mech)
@@ -83,6 +83,7 @@ USE params
           ENDIF
         ENDDO
       ENDDO
+      CLOSE(15)
       RETURN
   END SELECT
 
@@ -206,7 +207,7 @@ td: &
     ENDIF
 
 ! save data to database:
-    IF(line(1:1)=='#') CYCLE ! Ignore comments
+    IF(line(1:1)=='#' .or. line=='') CYCLE ! Ignore comments and empty lines
     nrxn = nrxn + 1 ! counter for number of (active) reactions
     idx = INDEX(line,":")
     READ(line(:idx-1),*) tid
