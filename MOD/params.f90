@@ -18,7 +18,7 @@
 !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!
 
 MODULE params
-  INTEGER, PARAMETER    :: llen=100, flen=80, llab=50
+  INTEGER, PARAMETER    :: llen=120, flen=80, llab=50
   INTEGER, PARAMETER    :: np = 500, nbr=3
   INTEGER, PARAMETER    :: mech = 2
   INTEGER, SAVE         :: nrxn
