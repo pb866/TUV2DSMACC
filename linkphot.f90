@@ -16,7 +16,7 @@ PROGRAM linkphot
 !                                                                      !
 ! VARIABLES:                                                           !
 !                                                                      !
-! • fmech/flink/foutp/ftuv/fconst:                                     !
+! • fmech/flink/foutp/ftuv/fglob/fconst:                               !
 !               Paths + names of I/O files                             !
 ! • translib:   Library of IDs used in DSMACC and corresponding TUV IDs!
 !               as well as switches to toggle on/off reactions in TUV  !
@@ -43,7 +43,7 @@ USE params
 
   IMPLICIT NONE
 
-  CHARACTER(flen)  :: fmech,flink,foutp,ftuv,fconst
+  CHARACTER(flen)  :: fmech,flink,foutp,ftuv,fglob,fconst
   INTEGER          :: translib(np,2+nbr),idtuv(np)
   REAL(4)          :: brat(np,nbr)
   CHARACTER(llab)  :: tdblab(np),tuvlab(np)
@@ -53,7 +53,7 @@ USE params
 !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!
 
 ! initialise files (get file names from arguments or use standard names)
-  CALL finit(fmech,flink,foutp,ftuv,fconst)
+  CALL finit(fmech,flink,foutp,ftuv,fglob,fconst)
 
 ! read photolysis IDs and labels from files
   CALL tdlnk(flink,translib,tdblab,brat)
@@ -71,7 +71,7 @@ USE params
 
 ! Adjust DSMACC constants file:
 ! - Adjust array sizes related to j values
-  CALL adjARRsiz(fconst,jmax)
+  CALL adjARRsiz(fglob,jmax)
 ! - Amend select case of TUVvers by missing include files
   CALL adjCASE(fconst,foutp)
 
