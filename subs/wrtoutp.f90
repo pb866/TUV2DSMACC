@@ -78,7 +78,7 @@ USE params
 
 ! Link reactions
 ! Initialise select case in output source code
-  WRITE(15,"('  SELECT CASE (jl)')")
+  WRITE(15,"('  SELECT CASE (j)')")
 ! Loop over DSMACC j values
   DO
     READ(16,*,IOSTAT=ierr) nj
@@ -97,8 +97,7 @@ USE params
       IF(nj==translib(n,1)) THEN
         IF(translib(n,2+nbr)==0) THEN
           WRITE(*,'(A)') "WARNING! TUV reaction flag set to FALSE for:"
-          WRITE(*,104) &
-               "J(",translib(n,1+nbr),") in TUV"
+          WRITE(*,104) "J(",translib(n,1+nbr),") in TUV"
         ENDIF
         WRITE(15,101) translib(n,1+nbr)
 ! Determine branching ratios in DSMACC
@@ -151,15 +150,15 @@ USE params
 
 ! Formats:
 101 FORMAT(4X,"CASE(",I3,")")
-102 FORMAT(6X,"j(",I4,") = seval(n,theta,tmp,tmp2,b,c,d) ! ",A)
-103 FORMAT(6X,"j(",I4,") = seval(n,theta,tmp,tmp2,b,c,d)*",F5.3," ! ",A)
+102 FORMAT(6X,"jval(",I4,") = seval(n,theta,tmp,tmp2,b,c,d) ! ",A)
+103 FORMAT(6X,"jval(",I4,") = seval(n,theta,tmp,tmp2,b,c,d)*",F5.3," ! ",A)
 104 FORMAT(A,I4,A)
 
 END SUBROUTINE wrtoutp
 
 !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!
 
-SUBROUTINE adjARRsiz(fconst,jmax)
+SUBROUTINE adjARRsiz(fglob,jmax)
 
 !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!
 !                                                                      !
@@ -178,7 +177,7 @@ SUBROUTINE adjARRsiz(fconst,jmax)
 ! VARIABLES:                                                           !
 !                                                                      !
 ! I/O:                                                                 !
-! • fconst:     Path + name of DSMACC constants file                   !
+! • fglob:      Path + name of DSMACC global.inc file                  !
 ! • jmax:       maximum value of DSMACC j labels rounded to the next   !
 !               full 100 needed to define array size in DSMACC         !
 !                                                                      !
@@ -201,7 +200,7 @@ USE params
   IMPLICIT NONE
 
 ! I/O:
-  CHARACTER(flen), INTENT(IN) ::    fconst
+  CHARACTER(flen), INTENT(IN) ::    fglob
   INTEGER, INTENT(IN) ::            jmax
 
 ! internal:
@@ -211,11 +210,11 @@ USE params
 !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!
 
 ! Check for existance of DSMACC constants file
-  INQUIRE(FILE=fconst, exist=ioexist)
+  INQUIRE(FILE=fglob, exist=ioexist)
 ! If not existing, issue warning on screen and skip routine
   IF(.not.ioexist) THEN
-    WRITE(*,'(A)') "WARNING! No DSMACC constants file found."
-    WRITE(*,'(2A)') "File name: ", trim(fconst)
+    WRITE(*,'(A)') "WARNING! No DSMACC global.inc file found."
+    WRITE(*,'(2A)') "File name: ", trim(fglob)
     WRITE(*,'(A)') &
       "Please, specify correct file name (and path) in programme argument 5."
     WRITE(*,'(A)') "Adjustment of DSMACC array sizes skipped."
@@ -226,9 +225,9 @@ USE params
 
 ! If existing, define perl command to search for the definition of
 ! Parameter jmax and replace with current array size limit
-  cmd = ""
+  cmd = " "
   WRITE(cmd,"(A,I5,2A)") "perl -pi -e 's/jmax\s*=\s*[0-9]+/jmax=", &
-       jmax,"/g;' ",trim(fconst)
+       jmax,"/g;' ",trim(fglob)
 ! Execute perl
   CALL SYSTEM(cmd)
 
@@ -243,8 +242,8 @@ SUBROUTINE adjCASE(fconst,foutp)
 !   SUBROUTINE adjCASE                                                 !
 !                                                                      !
 ! PURPOSE:                                                             !
-! Adjust array sizes related to j values in the DSMACC constants       !
-! module.                                                              !
+! Add CASE to SELECT CASE of TUVvers,                                  !
+! if current include file is missing.                                  !
 !                                                                      !
 !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!
 !                                                                      !
@@ -297,7 +296,14 @@ USE params
 !~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~!
 
 ! Skip routine, if no DSMACC constants file is defined
-  IF(fconst==" ") RETURN
+  IF(fconst==" ") THEN
+    WRITE(*,'(A)') "WARNING! No DSMACC constants file found."
+    WRITE(*,'(2A)') "File name: ", trim(fconst)
+    WRITE(*,'(A)') &
+      "Please, specify correct file name (and path) in programme argument 6."
+    WRITE(*,'(A)') "Check of SELECT CASE of TUVvers skipped."
+    RETURN
+  ENDIF
 
 ! Initialise variables
   ncase = 0
@@ -361,14 +367,14 @@ USE params
             WRITE(16,'(A)') trim(cmd)
 ! Print include command with current include file name
             cmd = " "
-            WRITE(cmd(ib+1:),"(3A)") "  INCLUDE './TUV_5.2.1/",trim(fname),"'"
+            WRITE(cmd(ib+1:),"(3A)") " INCLUDE './TUV_5.2.1/",trim(fname),"'"
             WRITE(16,'(A)') trim(cmd)
 ! Print default case with adjusted warning
             WRITE(16,'(A)') trim(line)
             READ(15,"(A)") line
             cmd = " "
             WRITE(cmd(ib+1:),"(A,I2,A)") &
-                 '  STOP "Select TUV case between 0 and ',ncase,'."'
+                 ' STOP "Select TUV case between 0 and ',ncase,'."'
            WRITE(16,'(A)') trim(cmd)
           ELSE ncs
 ! If case already exists, print original default case
