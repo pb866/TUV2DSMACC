@@ -29,13 +29,13 @@ full 100.
 2. Adjust parameters in Module MOD/params.f90 and re-compile.
 3. Run programme using
    ```
-   ./linkphot [<kpp file> [<TUV input file> [<link db file> [<output file> [<DSMACC constants file>]]]]]
+   ./linkphot [<kpp file> [<TUV input file> [<link db file> [<output file> [<DSMACC constants file> [<DSMACC global.inc file]]]]]]
    ```
     1. Default folder is the _IO folder_, except for the database file,
        for which it is the _DB folder_.
     2. File arguments are optional. Default names and paths will be used,
-       if obsolete (see [later](#io-files)), except for constants.f90,
-       which is not treated, if obsolete.
+       if obsolete (see [later](#io-files)), except for constants.f90 and
+       global.inc, which are not treated, if obsolete.
 4. Output is written to the defined output file in the _IO_ folder.
 
 
@@ -77,6 +77,7 @@ The order of the arguments is:
 3. Database file
 4. Output include file
 5. DSMACC constants file
+6. DSMACC global.inc file
 
 Standard folder paths are assumed by the programme, which are `IO/` for
 all files except the database file, for which the standard paths is `DB/`.

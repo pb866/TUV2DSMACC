@@ -78,7 +78,7 @@ USE params
 
 ! Link reactions
 ! Initialise select case in output source code
-  WRITE(15,"('  SELECT CASE (j)')")
+  WRITE(15,"('  SELECT CASE (jl)')")
 ! Loop over DSMACC j values
   DO
     READ(16,*,IOSTAT=ierr) nj
@@ -150,8 +150,8 @@ USE params
 
 ! Formats:
 101 FORMAT(4X,"CASE(",I3,")")
-102 FORMAT(6X,"jval(",I4,") = seval(n,theta,tmp,tmp2,b,c,d) ! ",A)
-103 FORMAT(6X,"jval(",I4,") = seval(n,theta,tmp,tmp2,b,c,d)*",F5.3," ! ",A)
+102 FORMAT(6X,"j(",I4,") = seval(szabin,theta,tmp,tmp2,b,c,d) ! ",A)
+103 FORMAT(6X,"j(",I4,") = seval(szabin,theta,tmp,tmp2,b,c,d)*",F5.3," ! ",A)
 104 FORMAT(A,I4,A)
 
 END SUBROUTINE wrtoutp
