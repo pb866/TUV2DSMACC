@@ -212,6 +212,6 @@ adjusted in subroutine _wrtoutp_.
 ### File units
 
 File unit | I/O files
----------:|:---------
-       15 | I/O files fmech, flink, ftuv, foutp, fconst
-       16 | temporary files sortj.tmp and constants.tmp
+---------:|:-------------------------------------------
+   15     | I/O files fmech, flink, ftuv, foutp, fconst
+   16     | temporary files sortj.tmp and constants.tmp
